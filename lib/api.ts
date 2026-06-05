@@ -4,35 +4,42 @@ const BASE_URL = 'http://localhost:5000/api';
 
 // --- 1. DEFINICIÓN DE TIPOS (Interfaces para TypeScript) ---
 export interface Movie {
-  id: number;
-  title: string;
-  synopsis: string;
-  poster_url?: string;
-  duration?: number;
-  genre_id?: number;
-}
-
-export interface Screening {
-  id: number;
   movie_id: number;
-  room_id: number;
-  start_time: string;
-  date: string;
-  price: number;
+  title: string;
+  director: string;
+  duration: string; // En tu PDF aparece como varchar
+  poster_url: string;
+  status: boolean; // En tu PDF aparece como boolean
+  genre_id: number;
 }
 
-export interface Booking {
-  id?: number;
-  customer_id?: number;
-  screening_id: number;
-  seat_ids: string[] | number[];
-  status?: string;
+export interface Genre {
+  genre_id: number;
+  name: string;
 }
 
 export interface Room {
-  id: number;
-  name: string;
-  capacity: number;
+  room_id: number;
+  room_number: number;
+  total_capacity: number;
+  room_type: string;
+  room_status: string; // Ej: Disponible, Ocupado
+}
+
+export interface Screening {
+  screening_id: number;
+  date_time: Date;
+  movie_id: number;
+  room_id: number;
+}
+
+export interface Booking {
+  booking_id: number;
+  customer_id: number;
+  created_at: Date;
+  booking_status: string; // Ej: Confirmada, Cancelada
+  screening_id: number;
+  user_id: number; // El usuario que gestiona la reserva
 }
 
 
