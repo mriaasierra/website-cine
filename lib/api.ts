@@ -12,6 +12,7 @@ export interface Movie {
   status: boolean | string; // Ajustado para evitar conflictos en los filtros
   genre_id: number;
   synopsis?: string;
+  id?: number;
 }
 
 export interface Genre {
