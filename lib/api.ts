@@ -31,7 +31,7 @@ export interface Room {
 
 export interface Screening {
   screening_id: number;
-  date_time: Date | string; // Ajustado a string | Date para evitar errores en formatos ISO
+  date_time: Date | string; 
   movie_id: number;
   room_id: number;
 }
@@ -39,17 +39,19 @@ export interface Screening {
 export interface Booking {
   booking_id: number;
   customer_id: number;
-  created_at: Date | string; // ¡Corregido! Ahora acepta el .toISOString() de tus reservas simuladas
+  created_at: Date | string; 
   booking_status: string; 
   screening_id: number;
   user_id: number; 
 }
 
+// ¡Corregido e hiper-flexible para tus datos de prueba!
 export interface SeatAssignment {
-  seat_id: number;
+  seat_id?: number;
+  assignment_id?: number;     // Añadido para emparejar con tu mock data
   booking_id: number;
   row_number?: string | number;
-  seat_number?: number;
+  seat_number?: string | number; // ¡Solucionado! Ahora acepta textos como 'C4' y 'C5'
   [key: string]: any; 
 }
 
