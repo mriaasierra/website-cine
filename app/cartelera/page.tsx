@@ -27,26 +27,28 @@ export default function BillboardPage() {
       setIsLoading(true)
       setError(null)
 
-      // GET /api/movies (PUBLIC)
-      const { data: moviesData, error: moviesError } = await moviesApi.getAll()
-      
-      // GET /api/genres (PUBLIC)
-      const { data: genresData, error: genresError } = await genresApi.getAll()
+      try {
+        // Consumimos las promesas con la estructura real de tu api.ts
+        const moviesData = await moviesApi.getAll()
+        const genresData = await genresApi.getAll()
 
-      if (moviesError || !moviesData) {
-        // Fallback to mock data
+        // Validamos si el backend responde con el array directo o envuelto en un objeto .data
+        const actualMovies = Array.isArray(moviesData) ? moviesData : (moviesData?.data || [])
+        const actualGenres = Array.isArray(genresData) ? genresData : (genresData?.data || [])
+
+        setMovies(actualMovies)
+        setGenres(actualGenres.length > 0 ? actualGenres : mockGenres)
+      } catch (err: any) {
+        // Fallback a mock data si falla o si no hay API externa configurada todavía
         if (!process.env.NEXT_PUBLIC_API_URL) {
           setMovies(mockMovies)
           setGenres(mockGenres)
         } else {
-          setError(moviesError || 'Error al cargar películas')
+          setError(err.message || 'Error al cargar los datos del cine')
         }
-      } else {
-        setMovies(moviesData)
-        setGenres(genresData || mockGenres)
+      } finally {
+        setIsLoading(false)
       }
-
-      setIsLoading(false)
     }
 
     fetchData()
@@ -55,12 +57,13 @@ export default function BillboardPage() {
   // Filter movies based on search and genre
   const filteredMovies = useMemo(() => {
     return movies.filter(movie => {
-      // Only show active movies
-      if (movie.status !== 'Activa') return false
+      // Validamos si viene como boolean (true) o string ('Activa') para que TypeScript no chille
+      const isActive = movie.status === true || movie.status === 'Activa'
+      if (!isActive) return false
       
       // Search filter
       const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          movie.director.toLowerCase().includes(searchQuery.toLowerCase())
+                            movie.director.toLowerCase().includes(searchQuery.toLowerCase())
       
       // Genre filter
       const matchesGenre = selectedGenre === null || movie.genre_id === selectedGenre

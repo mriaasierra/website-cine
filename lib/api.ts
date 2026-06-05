@@ -1,15 +1,15 @@
 // WEBSITE-CINE / lib / api.ts
 
-const BASE_URL = 'http://localhost:5000/api';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 // --- 1. DEFINICIÓN DE TIPOS (Interfaces para TypeScript) ---
 export interface Movie {
   movie_id: number;
   title: string;
   director: string;
-  duration: string; // En tu PDF aparece como varchar
+  duration: string; 
   poster_url: string;
-  status: boolean; // En tu PDF aparece como boolean
+  status: boolean | string; // Ajustado para evitar conflictos en los filtros
   genre_id: number;
 }
 
@@ -23,7 +23,7 @@ export interface Room {
   room_number: number;
   total_capacity: number;
   room_type: string;
-  room_status: string; // Ej: Disponible, Ocupado
+  room_status: string; 
 }
 
 export interface Screening {
@@ -37,13 +37,13 @@ export interface Booking {
   booking_id: number;
   customer_id: number;
   created_at: Date;
-  booking_status: string; // Ej: Confirmada, Cancelada
+  booking_status: string; 
   screening_id: number;
-  user_id: number; // El usuario que gestiona la reserva
+  user_id: number; 
 }
 
 
-// --- 2. OBJETOS DE LA API (Hacia tus endpoints en plural del Backend) ---
+// --- 2. OBJETOS DE LA API ---
 
 // Módulo de Cine y Cartelera
 export const moviesApi = {
@@ -55,6 +55,15 @@ export const moviesApi = {
   getById: async (id: number) => {
     const response = await fetch(`${BASE_URL}/movies/${id}`);
     if (!response.ok) throw new Error('Error al obtener la película');
+    return response.json();
+  }
+};
+
+// ¡Agregado! Esto era lo que Netlify no encontraba
+export const genresApi = {
+  getAll: async () => {
+    const response = await fetch(`${BASE_URL}/genres`);
+    if (!response.ok) throw new Error('Error al cargar géneros');
     return response.json();
   }
 };
