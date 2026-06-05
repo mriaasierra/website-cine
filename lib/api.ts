@@ -11,6 +11,7 @@ export interface Movie {
   poster_url: string;
   status: boolean | string; // Ajustado para evitar conflictos en los filtros
   genre_id: number;
+  synopsis?: string;
 }
 
 export interface Genre {
