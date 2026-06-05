@@ -10,10 +10,10 @@ export interface Movie {
   director: string;
   duration: string; 
   poster_url: string;
-  status: boolean | string; // Permite tanto booleanos como texto ('Activa') sin romper la compilación
+  status: boolean | string; 
   genre_id: number;
-  synopsis?: string;        // Opcional para solucionar el error en app/page.tsx
-  id?: number;              // Opcional para solucionar el error de keys en app/page.tsx
+  synopsis?: string;        
+  id?: number;              
 }
 
 export interface Genre {
@@ -31,7 +31,7 @@ export interface Room {
 
 export interface Screening {
   screening_id: number;
-  date_time: Date;
+  date_time: Date | string; // Ajustado a string | Date para evitar errores en formatos ISO
   movie_id: number;
   room_id: number;
 }
@@ -39,25 +39,23 @@ export interface Screening {
 export interface Booking {
   booking_id: number;
   customer_id: number;
-  created_at: Date;
+  created_at: Date | string; // ¡Corregido! Ahora acepta el .toISOString() de tus reservas simuladas
   booking_status: string; 
   screening_id: number;
   user_id: number; 
 }
 
-// Interfaz agregada para solucionar el error en app/reservas/page.tsx
 export interface SeatAssignment {
   seat_id: number;
   booking_id: number;
   row_number?: string | number;
   seat_number?: number;
-  [key: string]: any; // Permite cualquier otra propiedad extra que use tu vista de reservas
+  [key: string]: any; 
 }
 
 
 // --- 2. OBJETOS DE LA API (Endpoints del Backend) ---
 
-// Módulo de Cine y Cartelera
 export const moviesApi = {
   getAll: async () => {
     const response = await fetch(`${BASE_URL}/movies`);
@@ -71,7 +69,6 @@ export const moviesApi = {
   }
 };
 
-// Objeto agregado para solucionar el error inicial de la cartelera
 export const genresApi = {
   getAll: async () => {
     const response = await fetch(`${BASE_URL}/genres`);
@@ -109,7 +106,6 @@ export const seatsApi = {
   }
 };
 
-// Módulo de Reservas
 export const bookingsApi = {
   create: async (bookingData: Booking) => {
     const response = await fetch(`${BASE_URL}/bookings`, {
