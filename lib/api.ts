@@ -3,16 +3,17 @@
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 // --- 1. DEFINICIÓN DE TIPOS (Interfaces para TypeScript) ---
+
 export interface Movie {
   movie_id: number;
   title: string;
   director: string;
   duration: string; 
   poster_url: string;
-  status: boolean | string; // Ajustado para evitar conflictos en los filtros
+  status: boolean | string; // Permite tanto booleanos como texto ('Activa') sin romper la compilación
   genre_id: number;
-  synopsis?: string;
-  id?: number;
+  synopsis?: string;        // Opcional para solucionar el error en app/page.tsx
+  id?: number;              // Opcional para solucionar el error de keys en app/page.tsx
 }
 
 export interface Genre {
@@ -44,8 +45,17 @@ export interface Booking {
   user_id: number; 
 }
 
+// Interfaz agregada para solucionar el error en app/reservas/page.tsx
+export interface SeatAssignment {
+  seat_id: number;
+  booking_id: number;
+  row_number?: string | number;
+  seat_number?: number;
+  [key: string]: any; // Permite cualquier otra propiedad extra que use tu vista de reservas
+}
 
-// --- 2. OBJETOS DE LA API ---
+
+// --- 2. OBJETOS DE LA API (Endpoints del Backend) ---
 
 // Módulo de Cine y Cartelera
 export const moviesApi = {
@@ -61,7 +71,7 @@ export const moviesApi = {
   }
 };
 
-// ¡Agregado! Esto era lo que Netlify no encontraba
+// Objeto agregado para solucionar el error inicial de la cartelera
 export const genresApi = {
   getAll: async () => {
     const response = await fetch(`${BASE_URL}/genres`);
@@ -99,7 +109,7 @@ export const seatsApi = {
   }
 };
 
-// Módulo de Ventas y Reservas
+// Módulo de Reservas
 export const bookingsApi = {
   create: async (bookingData: Booking) => {
     const response = await fetch(`${BASE_URL}/bookings`, {
